@@ -16,6 +16,7 @@ public class player : MonoBehaviour
 
     public GameObject flare;
     public GameObject congrats;
+    public TentScr tent;
 
     void FixedUpdate()
     {
@@ -55,7 +56,8 @@ public class player : MonoBehaviour
 
     public void Flare()
     {
-        Instantiate(flare, new Vector3(transform.position.x, transform.position.y+2, transform.position.z-4), Quaternion.identity);
+        tent = FindObjectOfType<TentScr>();
+        Instantiate(flare, new Vector3(tent.transform.position.x, tent.transform.position.y-4, transform.position.z-4), Quaternion.identity);
         Instantiate(congrats);
     }
 }
