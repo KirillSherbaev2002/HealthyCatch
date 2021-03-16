@@ -6,36 +6,41 @@ using TMPro;
 public class player : MonoBehaviour
 { 
     public SwitchScene ChangeScene;
+    public Spewner Spewner;
+
     public float MaxX;
     public float speed;
 
-    public float RangeToGroup = 1000;
+    public float RangeToGroup = 100;
     public TMP_Text Range;
 
-    public bool DidYouWon;
-    void Update()
+    public GameObject flare;
+    public GameObject congrats;
+
+    void FixedUpdate()
     {
-        Vector3 newPadposition = new Vector3(); 
-        Vector3 mousePixelPoint = Input.mousePosition;
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePixelPoint);
-
-        newPadposition = new Vector3(mouseWorldPosition.x, transform.position.y, 0);
-        newPadposition.x = Mathf.Clamp(newPadposition.x, -MaxX, MaxX);
-        transform.position = newPadposition;
-
-        RangeToGroup -= speed * 0.1f * Time.deltaTime;
-        Range.text = RangeToGroup.ToString();
-        if (DidYouWon)
+        #region Control
+        if (Spewner.TentWasntSpawned) 
         {
-            Range.text = "You Saved Them!".ToString();
+            Vector3 newPadposition = new Vector3();
+            Vector3 mousePixelPoint = Input.mousePosition;
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePixelPoint);
+
+            newPadposition = new Vector3(mouseWorldPosition.x, transform.position.y, 0);
+            newPadposition.x = Mathf.Clamp(newPadposition.x, -MaxX, MaxX);
+            transform.position = newPadposition;
+
+            RangeToGroup -= speed * 0.05f * Time.deltaTime;
+            Range.text = Mathf.Floor(RangeToGroup).ToString();
         }
-        else
+        #endregion 
+        if (Spewner.TentWasntSpawned)
         {
-            RangeToGroup -= speed * 0.1f * Time.deltaTime;
-            Range.text = RangeToGroup.ToString();
+            RangeToGroup -= speed * 0.07f * Time.deltaTime;
+            Range.text = RangeToGroup.ToString("F0")+"M";
             if (RangeToGroup <= 0)
             {
-                DidYouWon = true;
+                Spewner.SpawnCamp();
             }
         }
     }
@@ -46,5 +51,11 @@ public class player : MonoBehaviour
         {
             ChangeScene.SwitchToStart();
         }
+    }
+
+    public void Flare()
+    {
+        Instantiate(flare, new Vector3(transform.position.x, transform.position.y+2, transform.position.z-4), Quaternion.identity);
+        Instantiate(congrats);
     }
 }
